@@ -8,36 +8,40 @@
 </head>
 <body>
     
-    <div class="card">
-        <div class="search">
-            <input type="text" placeholder="enter city name" spellcheck="false">
-            <button><img src="img/search.png" alt=""></button>
-        </div>
-        <div class="error">
-            <p>Invalid City Name</p>
-        </div>
-        <div class="weather">
-            <img src="img/rain.png" class="weather-icon">
-            <h1 class="temp">22°c</h1>
-            <h2 class="city">New York</h2>
-            <div class="details">
-                <div class="col">
-                    <img src="img/humidity.png">
-                    <div>
-                        <p class="humidity">50%</p>
-                        <p>Humidity</p>
+    <section> 
+        <img  alt="" class="weather-bg">
+        <div class="card">
+            <div class="search">
+                <input type="text" placeholder="enter city name" spellcheck="false">
+                <button><img src="img/search.png" alt=""></button>
+            </div>
+            <div class="error">
+                <p>Invalid City Name</p>
+            </div>
+            <div class="weather">
+                <img src="img/rain.png" class="weather-icon">
+                <h1 class="temp">22°c</h1>
+                <h2 class="city">New York</h2>
+                <h3 class="country">US</h3>
+                <div class="details">
+                    <div class="col">
+                        <img src="img/humidity.png">
+                        <div>
+                            <p class="humidity">50%</p>
+                            <p>Humidity</p>
+                        </div>
                     </div>
-                </div>
-                <div class="col">
-                    <img src="img/wind.png">
-                    <div>
-                        <p class="wind">15 km/h</p>
-                        <p>Wind Speed</p>
+                    <div class="col">
+                        <img src="img/wind.png">
+                        <div>
+                            <p class="wind">15 km/h</p>
+                            <p>Wind Speed</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <script>
 
@@ -46,7 +50,14 @@
 
         const searchBox = document.querySelector(".search input");
         const searchBtn = document.querySelector(".search button");
-        const weatherIcon = document.querySelector(".weather-icon")
+        const weatherIcon = document.querySelector(".weather-icon");
+        const weatherBg = document.querySelector(".weather-bg");
+
+        async function getCountryName(code) {
+            const response = await fetch(`https://restcountries.com/v3.1/alpha/${code}`);
+            const data = await response.json();
+            return data[0].name.common;
+        }
 
         async function checkWeather(city) {
             const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
@@ -56,26 +67,34 @@
                 document.querySelector(".weather").style.display = "none";
             } else {
             var data = await response.json();
+            console.log(data);
  
+            const countryName = await getCountryName(data.sys.country);
             document.querySelector(".city").innerHTML = data.name;
+            document.querySelector(".country").innerHTML = countryName;
             document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°c";
             document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
             document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
 
             if(data.weather[0].main == "Clouds") {
                 weatherIcon.src = "img/clouds.png";
+                weatherBg.src = "img/clouds.gif";
             }
             else if(data.weather[0].main == "Clear") {
                 weatherIcon.src = "img/clear.png";
+                weatherBg.src = "img/clear.gif";
             }
             else if(data.weather[0].main == "Rain") {
                 weatherIcon.src = "img/rain.png";
+                weatherBg.src = "img/rain.gif";
             }
             else if(data.weather[0].main == "Drizzle") {
                 weatherIcon.src = "img/drizzle.png";
+                weatherBg.src = "img/drizzle.jpg";
             }
             else if(data.weather[0].main == "Mist") {
                 weatherIcon.src = "img/mist.png";
+                weatherBg.src = "img/mist.gif";
             }
 
             document.querySelector(".weather").style.display = "block"
